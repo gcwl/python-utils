@@ -1,5 +1,6 @@
 import gc
 from collections import OrderedDict as odict
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -17,7 +18,8 @@ def csv2df(path, verbose=True, **kw):
     return df
 
 
-def frame_info(df, return_frame=False):
+def frame_info(df:pd.DataFrame,
+               return_frame:bool=False):
     nr, nc = df.shape
     isna = df.isna().sum(axis=0)
     count = df.count()
