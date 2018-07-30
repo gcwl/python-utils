@@ -8,13 +8,10 @@ import pandas as pd
 from IPython.display import display
 
 
-def csv2df(path, verbose=True, **kw):
+def csv2df(path, **kw):
     df = pd.read_csv(path, **kw)
-    if verbose:
-        print('shape = {}'.format(df.shape))
-        display(df.head(10))
-        df.info()
-        display(df.describe())
+    df.info()
+    print('shape: {}'.format(df.shape))
     return df
 
 
