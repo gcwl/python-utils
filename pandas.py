@@ -26,11 +26,17 @@ palette_dtypes = {np.dtype('object'): '#fd7272',
 
 
 def frame_info(frame: pd.DataFrame,
+               dtypes_include: Tuple=None,
+               dtypes_exclude: Tuple=None,
                n_samples: int=10,
                styling: bool=True,
                before_styling: Callable=lambda df: df):
 
-    # compute values of interest
+    # filter columns
+    if dtypes_include is not None or dtypes_exclude is not None:
+        frame = frame.select_dtypes(include=dtypes_include, exclude=dtypes_exclude)
+
+    # compute values
     nrow, ncol = frame.shape
     num_nan = frame.isna().sum(axis=0)
     num_notnan = frame.count()
@@ -41,7 +47,7 @@ def frame_info(frame: pd.DataFrame,
     max10k = np.min([10_000, nrow//10])
     n_samples = np.min([1_000, max10k, n_samples])
 
-    # build dataframe of interest
+    # build dataframe
     res = pd.DataFrame(odict(dtypes=frame.dtypes,
                              samples=frame.sample(max10k).agg(lambda x:list(x.unique()[:n_samples])),
                              frac_nan=frac_nan,
