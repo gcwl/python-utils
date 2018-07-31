@@ -1,6 +1,6 @@
 import gc
 from collections import OrderedDict as odict
-from typing import List
+from typing import List, Tuple, Callable
 
 import numpy as np
 import pandas as pd
@@ -15,37 +15,47 @@ def csv2df(path, **kw):
     return df
 
 
-def frame_info(df:pd.DataFrame,
-               return_frame:bool=False):
-    nr, nc = df.shape
-    isna = df.isna().sum(axis=0)
-    count = df.count()
-    nunique = df.nunique()
-    nsamples = np.min([1000, nr//10])
+def frame_info(frame: pd.DataFrame,
+               n_samples: int=10,
+               styling: bool=True,
+               before_styling: Callable=lambda df: df):
 
-    res = pd.DataFrame(odict(dtypes=df.dtypes,
-                             samples=df.sample(nsamples).agg(lambda c:list(c.unique()[:10])),
-                             frac_isna=isna/nr,
-                             num_isna=isna,
-                             num_notna=count,
-                             frac_unique=nunique/count,
-                             num_unique=nunique))
+    # compute values of interest
+    nrow, ncol = frame.shape
+    num_nan = frame.isna().sum(axis=0)
+    num_notnan = frame.count()
+    frac_nan = num_nan/nrow
+    num_unique = frame.nunique()
+    frac_unique = num_unique/num_notnan
+
+    max10k = np.min([10_000, nrow//10])
+    n_samples = np.min([1_000, max10k, n_samples])
+
+    # build dataframe of interest
+    res = pd.DataFrame(odict(dtypes=frame.dtypes,
+                             samples=frame.sample(max10k).agg(lambda x:list(x.unique()[:n_samples])),
+                             frac_nan=frac_nan,
+                             num_nan=num_nan,
+                             num_notnan=num_notnan,
+                             frac_unique=frac_unique,
+                             num_unique=num_unique))
 
     gc.collect()
-    print(df.shape)
+    print('shape = {}'.format(frame.shape))
 
-    if return_frame:
+    if not styling:
         return res
 
-    def color_dtypes(value: str) -> str:
-        palette = {np.dtype('object'): '#ff6b81',
-                   np.dtype('float64'): '#34e7e4',
-                   np.dtype('int64'): '#ffdd59'}
-        return 'background-color: {}'.format(palette.get(value, '#2f3542'))
+    # for instance, one can sort_values() before styling
+    res = before_styling(res)
 
-    return (res.sort_values(by='frac_isna', ascending=False)
-            .style
-            .applymap(color_dtypes, subset=['dtypes'])
-            .bar(subset=['frac_unique', 'frac_isna'],
-                       color='#778ca3'))
+    bg_dtypes = lambda val: f'background-color: {palette_dtypes.get(val, "#9b59b6")}'
+    fg_frac_nan = lambda val: f'color: {"red" if val > .5 else "black"}'
+    fg_frac_unique = lambda val: f'color: {"red" if val < .1 else "black"}'
+    return (res.style
+               .bar(subset=['frac_nan'], color='#8395a7', width=100*frac_nan.max())
+               .bar(subset=['frac_unique'], color='#cad3c8', width=100*frac_unique.max())
+               .applymap(bg_dtypes, subset=['dtypes'])
+               .applymap(fg_frac_nan, subset=['frac_nan'])
+               .applymap(fg_frac_unique, subset=['frac_unique']))
 
