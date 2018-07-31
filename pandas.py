@@ -6,6 +6,7 @@ from typing import List, Tuple, Callable
 import numpy as np
 import scipy as sp
 import pandas as pd
+from tqdm import tqdm
 
 
 
@@ -87,7 +88,7 @@ def qqplot(frame: pd.DataFrame,
 
     # fill qqplots into figure
     g = ((p, q) for p in count(0) for q in range(fig_cols))
-    for (r, c), column in zip(g, columns):
+    for (r, c), column in tqdm(zip(g, columns), total=ncol):
         # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.probplot.html
         (x, y), (m, b, _) = sp.stats.probplot(frame[column].dropna())
         color = palette_dtypes.get(frame[column].dtype, '#9b59b6')
@@ -96,4 +97,3 @@ def qqplot(frame: pd.DataFrame,
         ax[r][c].set_title(column, fontsize=10)
 
     gc.collect()
-
