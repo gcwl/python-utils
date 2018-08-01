@@ -71,29 +71,42 @@ def frame_info(frame: pd.DataFrame,
 
 
 
-def qqplot(frame: pd.DataFrame,
-           dtypes_include: Tuple[str]=('int32', 'int64', 'float32', 'float64'),
-           dtypes_exclude: Tuple[str]=('object',)):
+def qqplot(data):
 
-    # include/exclude columns by dtypes
-    columns = frame.select_dtypes(include=dtypes_include, exclude=dtypes_exclude).columns
-    # how many columns will be plotted
-    ncol = len(columns)
-
-    # setup figure size, number of rows/cols
-    fig_cols = 5
-    fig_rows = (ncol % fig_cols != 0) + ncol // fig_cols
-    fig_size = (19, 3.6 * fig_rows)
-    fig, ax = plt.subplots(fig_rows, fig_cols, figsize=fig_size)
-
-    # fill qqplots into figure
-    g = ((p, q) for p in count(0) for q in range(fig_cols))
-    for (r, c), column in tqdm(zip(g, columns), total=ncol):
+    def make_plot(series: pd.Series,
+                  axes, #: matplotlib.axes.Axes
+                  title: str):
         # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.probplot.html
-        (x, y), (m, b, _) = sp.stats.probplot(frame[column].dropna())
-        color = palette_dtypes.get(frame[column].dtype, '#9b59b6')
-        ax[r][c].plot(x, y, color=color, marker='|', linestyle='')
-        ax[r][c].plot(x, m*x+b, color='#4b4b4b', linestyle='-', linewidth=.9)
-        ax[r][c].set_title(column, fontsize=10)
+        (x, y), (m, b, r) = sp.stats.probplot(series.dropna())
+        color = palette_dtypes.get(series.dtype, '#9b59b6')
+        axes.plot(x, y, color=color, marker='|', linestyle='')
+        axes.plot(x, m*x+b, color='#4b4b4b', linestyle='-', linewidth=.9)
+        axes.set_title(title, fontsize=10)
+
+    def plot_frame(frame: pd.DataFrame):
+        # setup figure size, number of rows/cols
+        nrow, ncol = frame.shape
+        fig_ncol = np.min([5, ncol])                          # magic constant: 5
+        fig_nrow = (ncol % fig_ncol != 0) + ncol // fig_ncol
+        fig_size = (19, 3.6 * fig_nrow)                       # magic constants: 19, 3.6
+        fig, ax = plt.subplots(fig_nrow, fig_ncol, figsize=fig_size)
+        # make qqplots in figure/axes
+        g = ((p, q) for p in count(0) for q in range(fig_ncol))
+        for (r, c), column in zip(g, frame.columns):
+            axes = ax[r][c] if fig_nrow > 1 else ax[c]        # Axes is 1D-array if fig_nrow == 1
+            make_plot(frame[column], axes, column)
+
+    def plot_series(series: pd.Series):
+        ax = plt.subplot()
+        make_plot(series, ax, series.name)
+
+    if isinstance(data, pd.DataFrame):
+        # exclude np.dtype('object') columns
+        frame = data.select_dtypes(exclude='object')
+        plot_frame(frame)
+    elif isinstance(data, pd.Series):
+        plot_series(data)
+    else:
+        raise TypeError(f'Unknow object: {data}')
 
     gc.collect()
