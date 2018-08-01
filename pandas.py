@@ -26,15 +26,14 @@ palette_dtypes = {np.dtype('object'): '#fd7272',
 
 
 def frame_info(frame: pd.DataFrame,
-               dtypes_include: Tuple=None,
-               dtypes_exclude: Tuple=None,
-               n_samples: int=10,
+#                dtypes_include: Tuple=None,
+#                dtypes_exclude: Tuple=None,
                styling: bool=True,
                before_styling: Callable=lambda df: df):
 
-    # filter columns
-    if dtypes_include is not None or dtypes_exclude is not None:
-        frame = frame.select_dtypes(include=dtypes_include, exclude=dtypes_exclude)
+#     # include/exclude columns by dtypes
+#     if dtypes_include is not None or dtypes_exclude is not None:
+#         frame = frame.select_dtypes(include=dtypes_include, exclude=dtypes_exclude)
 
     # compute values
     nrow, ncol = frame.shape
