@@ -1,13 +1,13 @@
 import time
 from contextlib import contextmanager
 
+
 @contextmanager
 def Timer(message=None, stream=print):
-    start_time = time.time()
+    t0 = time.time()
     yield
-    elapsed_time = time.time() - start_time
-    message = message or 'Time elapsed'
-    stream(f'{message}: {elapsed_time:.4f}s')
+    dt = time.time() - t0
+    stream(f'{message or "Time elapsed"}: {dt:.4f}s')
 
 
 if __name__ == '__main__':
