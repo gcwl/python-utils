@@ -6,15 +6,6 @@ from typing import List, Tuple, Callable
 import numpy as np
 import scipy as sp
 import pandas as pd
-from tqdm import tqdm
-
-
-
-def csv2df(path, **kw):
-    df = pd.read_csv(path, **kw)
-    df.info()
-    print('shape: {}'.format(df.shape))
-    return df
 
 
 
@@ -23,6 +14,7 @@ palette_dtypes = {np.dtype('object'): '#fd7272',
                   np.dtype('float64'): '#60a3bc',
                   np.dtype('int64'): '#ff9f1a',
                   np.dtype('int32'): '#fed330'}
+
 
 
 def frame_info(frame: pd.DataFrame,
@@ -42,7 +34,7 @@ def frame_info(frame: pd.DataFrame,
     n_samples = np.min([1_000, max10k, n_samples])
 
     # build dataframe
-    res = pd.DataFrame(odict(dtypes=frame.dtypes,
+    res = pd.DataFrame(odict(dtype=frame.dtypes,
                              samples=frame.sample(max10k).agg(lambda x:list(x.unique()[:n_samples])),
                              frac_nan=frac_nan,
                              num_nan=num_nan,
@@ -51,7 +43,7 @@ def frame_info(frame: pd.DataFrame,
                              num_unique=num_unique))
 
     gc.collect()
-    print('shape = {}'.format(frame.shape))
+    print(f'shape = {frame.shape}')
 
     if not styling:
         return res
