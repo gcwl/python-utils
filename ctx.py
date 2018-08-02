@@ -3,9 +3,9 @@ import gc
 from contextlib import contextmanager
 
 
+# https://stackoverflow.com/a/21795428
 @contextmanager
 def Ctx():
-    # https://stackoverflow.com/a/21795428
     saved_ctx = dict(**sys.modules[__name__].__dict__)
     try:
         yield
