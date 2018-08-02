@@ -5,9 +5,11 @@ from contextlib import contextmanager
 @contextmanager
 def Timer(message=None, stream=print):
     t0 = time.time()
-    yield
-    dt = time.time() - t0
-    stream(f'{message or "Time elapsed"}: {dt:.4f}s')
+    try:
+        yield
+    finally:
+        dt = time.time() - t0
+        stream(f'{message or "Time elapsed"}: {dt:.4f}s')
 
 
 if __name__ == '__main__':
