@@ -18,7 +18,7 @@ palette_dtypes = {np.dtype('object'): '#fd7272',
 
 
 def frame_info(frame: pd.DataFrame,
-               n_samples: int=33,
+               n_samples: int=33,               # MAGIC: 33
                styling: bool=True,
                before_styling: Callable=lambda df: df):
 
