@@ -51,13 +51,13 @@ def frame_info(frame: pd.DataFrame,
     # for instance, one can sort_values() before styling
     res = before_styling(res)
 
-    bg_dtypes = lambda val: f'background-color: {palette_dtypes.get(val, "#9b59b6")}'
+    bg_dtype = lambda val: f'background-color: {palette_dtype.get(val, "#9b59b6")}'
     fg_frac_nan = lambda val: f'color: {"red" if val > .5 else "black"}'
     fg_frac_unique = lambda val: f'color: {"red" if val < .1 else "black"}'
     return (res.style
                .bar(subset=['frac_nan'], color='#8395a7', width=100*frac_nan.max())
                .bar(subset=['frac_unique'], color='#cad3c8', width=100*frac_unique.max())
-               .applymap(bg_dtypes, subset=['dtypes'])
+               .applymap(bg_dtype, subset=['dtype'])
                .applymap(fg_frac_nan, subset=['frac_nan'])
                .applymap(fg_frac_unique, subset=['frac_unique']))
 
