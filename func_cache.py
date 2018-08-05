@@ -65,3 +65,10 @@ def func_cache(f, cache_dir='./cache', return_path=False):
 @func_cache
 def read_csv(*args, **kw):
     return pd.read_csv(*args, **kw)
+
+
+@func_cache
+def one_hot(frame, columns, dummy_na=True, prefix_sep='=', **kw):
+    df = pd.get_dummies(frame, columns=columns, dummy_na=dummy_na, prefix_sep=prefix_sep, **kw)
+    cols_onehot = set(df.columns) - set(frame.columns)
+    return df, sorted(cols_onehot)
