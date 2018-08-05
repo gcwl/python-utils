@@ -4,6 +4,8 @@ import pickle
 import joblib
 import hashlib
 
+import pandas as pd
+
 from timer import Timer
 
                
@@ -58,3 +60,8 @@ def func_cache(f, cache_dir='./cache', return_path=False):
         return val
 
     return wrapper
+
+
+@func_cache
+def read_csv(*args, **kw):
+    return pd.read_csv(*args, **kw)
