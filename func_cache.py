@@ -8,7 +8,7 @@ import pandas as pd
 
 from timer import Timer
 
-               
+
 def hash_args(obj, h=None):
     h = h or hashlib.sha256()
     if isinstance(obj, dict):
@@ -28,7 +28,7 @@ def func_cache(f, cache_dir='./cache', return_path=False):
 
     @wraps(f)
     def wrapper(*args, **kw):
-        
+
         # name of wrapped func
         func_name = f.__name__
 
@@ -43,12 +43,12 @@ def func_cache(f, cache_dir='./cache', return_path=False):
         dirpath = f'{cache_dir}/FUNC.{func_name}'
         Path(dirpath).mkdir(exist_ok=True)
         filepath = f'{dirpath}/{checksum}.pkl'
-        
+
         # check if cache exists
         if Path(filepath).is_file():
             with Timer(f'<{func_name}> Load result from cache ({filepath})', LOG.info):
                 return filepath if return_path else joblib.load(filepath)
-        
+
         # compute value, and save result as feather format
         with Timer(f'<{func_name}> Compute result', LOG.info):
             val = f(*args, **kw)
