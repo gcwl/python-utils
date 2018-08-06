@@ -72,3 +72,4 @@ def one_hot(frame, columns, dummy_na=True, prefix_sep='=', **kw):
     df = pd.get_dummies(frame, columns=columns, dummy_na=dummy_na, prefix_sep=prefix_sep, **kw)
     cols_onehot = set(df.columns) - set(frame.columns)
     return df, sorted(cols_onehot)
+
