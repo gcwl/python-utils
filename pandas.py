@@ -102,3 +102,4 @@ def qqplot(data):
         raise TypeError(f'Unknow object: {data}')
 
     gc.collect()
+
