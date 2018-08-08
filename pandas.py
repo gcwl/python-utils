@@ -111,3 +111,14 @@ def common_columns(dataframes: List[pd.DataFrame]):
         intersection = set(df1.columns) & set(df2.columns)
         yield (i1, i2), intersection
 
+
+
+def drop_columns(df, columns, inplace=False):
+    nrow, ncol = df.shape
+    if ncol == 0:
+        return df
+    res = df.drop(columns=columns, inplace=inplace)
+    if ncol == len(columns):
+        LOG.info(f'Dataframe has 0 column after dropping {len(columns)} columns.')
+    return df if inplace else res
+
