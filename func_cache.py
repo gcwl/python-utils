@@ -9,6 +9,7 @@ import pandas as pd
 from timer import Timer
 
 
+
 def hash_args(obj, h=None):
     h = h or hashlib.sha256()
     if isinstance(obj, dict):
@@ -62,9 +63,11 @@ def func_cache(f, cache_dir='./cache', return_path=False):
     return wrapper
 
 
+
 @func_cache
 def read_csv(*args, **kw):
     return pd.read_csv(*args, **kw)
+
 
 
 @func_cache
