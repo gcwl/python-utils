@@ -103,3 +103,11 @@ def qqplot(data):
 
     gc.collect()
 
+
+
+def common_columns(dataframes: List[pd.DataFrame]):
+    tuples = enumerate(dataframes)
+    for (i1, df1), (i2, df2) in combinations(tuples, 2):
+        intersection = set(df1.columns) & set(df2.columns)
+        yield (i1, i2), intersection
+
