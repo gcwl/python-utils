@@ -118,8 +118,7 @@ def drop_columns(df, columns, inplace=False):
     if ncol == 0:
         return df
     res = df.drop(columns=columns, inplace=inplace)
-    m = len(columns)
-    if ncol == m:
-        LOG.info(f'Dataframe has 0 column after dropping {m} columns.')
+    nrow, ncol = res.shape
+    LOG.info(f'Dataframe has {ncol} column after dropping {len(columns)} columns.')
     return df if inplace else res
 
