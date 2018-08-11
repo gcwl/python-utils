@@ -122,3 +122,14 @@ def drop_columns(df, columns, inplace=False):
     LOG.info(f'Dataframe has {ncol} column after dropping {len(columns)} columns.')
     return df if inplace else res
 
+
+
+def categorize(frame, columns, dtype=None):
+    uniques = {}
+    for c in columns:
+        frame[c], u = pd.factorize(frame[c])
+        if dtype is not None:
+            frame[c] = frame[c].astype(dtype)
+        uniques[c] = u
+    return uniques
+
