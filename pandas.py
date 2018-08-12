@@ -133,3 +133,15 @@ def categorize(frame, columns, dtype=None):
         uniques[c] = u
     return uniques
 
+
+
+def negative_down_sample(data, target='TARGET', pos=1, neg=0, random_state=None):
+    pos_data = data[data[target] == pos]
+    pos_ratio = float(len(pos_data)) / len(data)
+
+    frac = pos_ratio / (1 - pos_ratio)
+    neg_data = data[data[target] == neg].sample(frac=frac, random_state=random_state)
+
+    index = pos_data.index.union(neg_data.index).sort_values()
+    return data.loc[index]
+
