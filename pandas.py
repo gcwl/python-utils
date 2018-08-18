@@ -145,3 +145,10 @@ def negative_down_sample(data, target='TARGET', pos=1, neg=0, random_state=None)
     index = pos_data.index.union(neg_data.index).sort_values()
     return data.loc[index]
 
+
+
+def column_cut(frame, columns):
+    df1 = frame[columns]
+    df2 = frame.drop(columns=columns)
+    return df1, df2
+
