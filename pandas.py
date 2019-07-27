@@ -51,7 +51,7 @@ def frame_info(frame: pd.DataFrame,
     # for instance, one can sort_values() before styling
     res = before_styling(res)
 
-    bg_dtype = lambda val: f'background-color: {palette_dtype.get(val, "#9b59b6")}'
+    bg_dtype = lambda val: f'background-color: {palette_dtypes.get(val, "#9b59b6")}'
     fg_frac_nan = lambda val: f'color: {"red" if val > .5 else "black"}'
     fg_frac_unique = lambda val: f'color: {"red" if val < .1 else "black"}'
     return (res.style
